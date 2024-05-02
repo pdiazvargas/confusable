@@ -1,5 +1,3 @@
-use std::io::{self, BufRead};
-
 use anyhow::Result;
 
 /// Holds the information of a single row from the confusable data set. A row has the following format:
@@ -28,31 +26,6 @@ impl ConfusableRow {
 impl From<&str> for ConfusableRow {
     fn from(value: &str) -> Self {
         todo!("implement here")
-    }
-}
-
-/// Store a list of the confusable character and the entry they can be replaced with.
-#[derive(Debug)]
-pub struct TableData {
-    data: Vec<ConfusableRow>,
-}
-
-impl TableData {
-    /// Parse each line of the confusables.txt file and populate the override map.
-    /// line: FF21 ; 0041 ; MA # ( Ａ → A ) FULLWIDTH LATIN CAPITAL LETTER A → LATIN CAPITAL LETTER A # →А→
-    ///       1         2       3
-    /// 1. confusable character
-    /// 2. replacement character
-    /// 3. comment that gets ignored.
-    pub fn parse(source_data: &[u8]) -> Result<Self> {
-        let mut data = Vec::new();
-        let reader = io::BufReader::new(source_data);
-
-        for _line in reader.lines() {
-            todo!("Implement this");
-        }
-
-        Ok(TableData { data })
     }
 }
 
