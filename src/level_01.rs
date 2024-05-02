@@ -13,6 +13,23 @@ pub enum Error {
 #[derive(Debug)]
 pub struct UnicodePoint(Vec<char>);
 
+impl UnicodePoint {
+    pub fn new() -> Self {
+        Self(Vec::new())
+    }
+
+    pub fn is_ascii(&mut self, c: char) -> bool {
+        todo!("Implement this method");
+        false
+    }
+
+    /// Convert a unicode point to an ASCII character. This only works if the point is a single character.
+    pub fn as_single_char(&self) -> char {
+        assert!(self.is_ascii(), "Value is not ASCII");
+        self.0[0]
+    }
+}
+
 #[derive(Debug)]
 pub struct ConfusableRow {
     confusable: char,
@@ -25,6 +42,25 @@ impl ConfusableRow {
             confusable,
             replacement: replacement.into(),
         }
+    }
+
+    pub fn source_is_ascii(&self) -> bool {
+        self.confusable.is_ascii()
+    }
+
+    pub fn target_is_ascii(&self) -> bool {
+        // implement the target_is_ascii method
+        // self.replacement.is_ascii()
+        false
+    }
+
+    /// The string representation of the confusable and the replacement character.
+    pub fn format_as_char(&self) -> String {
+        format!(
+            "    ('{}','{}'),\n",
+            self.confusable,
+            self.replacement.as_single_char()
+        )
     }
 }
 
@@ -141,6 +177,31 @@ mod test_level_0 {
 
         // The error message we receive directly from: `u32::from_str_radix`
         assert_eq!(error.to_string(), "invalid digit found in string")
+    }
+
+    #[test]
+    fn is_source_ascii() {
+        let row = "1D7D7 ;	0039 ;	MA	# ( 𝟗 → 9 ) MATHEMATICAL BOLD DIGIT NINE → DIGIT NINE	#";
+
+        let confusable = ConfusableRow::try_from(row).expect("Parsing to succeed");
+
+        assert!(!confusable.source_is_ascii());
+    }
+
+    #[test]
+    fn is_destination_ascii() {
+        let point = UnicodePoint::from('\u{0039}');
+
+        // 0039 is an ASCII character
+        assert!(point.is_ascii());
+    }
+
+    #[test]
+    fn is_destination_ascii_multibyte_code_point() {
+        let point = UnicodePoint::new(vec!['\u{0062}', '\u{0307}', '\u{00B7}']).is_ascii();
+
+        // 0062 0307 00B7 is NOT a single byte, then the destination is not ASCII
+        assert!(!point.is_ascii());
     }
 
     #[test]
