@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 
 /// Holds the information of a single row from the confusable data set. A row has the following format:
 /// FF21 ; 0041 ; MA # ( Ａ → A ) FULLWIDTH LATIN CAPITAL LETTER A → LATIN CAPITAL LETTER A # →А→
@@ -25,16 +25,29 @@ impl ConfusableRow {
 
 impl From<&str> for ConfusableRow {
     fn from(value: &str) -> Self {
-        todo!("implement here")
+        let parts = value.split(';').collect::<Vec<&str>>();
+
+        let confusable = parse_unicode_code_point(parts[0]).unwrap();
+        // 0066 0326
+        let replacement = parts[1]
+            .split_ascii_whitespace()
+            .map(|hex| parse_unicode_code_point(hex).unwrap())
+            .collect();
+
+        ConfusableRow {
+            confusable,
+            replacement,
+            comment: parts[2].trim().to_string(),
+        }
     }
 }
 
 /// Convert the hex representation of a unicode character to a char.
 /// hex: 0039 -> Ok(9)
-fn parse_unicode_code_point(_hex: &str) -> Result<char> {
+fn parse_unicode_code_point(hex: &str) -> Result<char> {
     // convert given string to hex (u32)
-    // convert the result to char
-    Ok('9')
+    let value = u32::from_str_radix(hex.trim(), 16)?;
+    char::from_u32(value).ok_or(anyhow!("Unable to convert the value"))
 }
 
 #[cfg(test)]

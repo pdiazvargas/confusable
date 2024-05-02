@@ -1,7 +1,7 @@
 use std::{fs::File, io::Write};
 
 mod level_00;
-// mod level_01;
+mod level_01;
 
 #[tokio::main]
 async fn main() {

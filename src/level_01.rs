@@ -18,8 +18,8 @@ impl UnicodePoint {
         Self(Vec::new())
     }
 
-    pub fn is_ascii(&mut self, c: char) -> bool {
-        todo!("Implement this method");
+    pub fn is_ascii(&self) -> bool {
+        // todo!("Implement this method");
         false
     }
 
