@@ -1,4 +1,7 @@
-use std::io::{self, BufRead};
+use std::{
+    io::{self, BufRead},
+    str::FromStr,
+};
 
 // No longer using anyhow
 //use anyhow::Result;
@@ -30,6 +33,14 @@ impl UnicodePoint {
     }
 }
 
+impl From<char> for UnicodePoint {
+    fn from(value: char) -> Self {
+        Self(vec![value])
+    }
+}
+
+pub struct ConfusableCharacter(char);
+
 #[derive(Debug)]
 pub struct ConfusableRow {
     confusable: char,
@@ -37,6 +48,7 @@ pub struct ConfusableRow {
 }
 
 impl ConfusableRow {
+    // ConfusableRow::new('2', '\u{2311}');
     pub fn new<R: Into<UnicodePoint>>(confusable: char, replacement: R) -> Self {
         Self {
             confusable,
@@ -65,13 +77,13 @@ impl ConfusableRow {
 }
 
 /// New trait, similar to the From trait, but with error handling.
-/// https://doc.rust-lang.org/std/convert/trait.TryFrom.html
-impl TryFrom<&str> for ConfusableRow {
-    type Error = Error;
+/// https://doc.rust-lang.org/std/str/trait.FromStr.html
+impl FromStr for ConfusableRow {
+    type Err = Error;
 
     /// Parse a single line from the confusable table data and return a new `ConfusableRow`. If
     /// the parsing does not work, return an error.
-    fn try_from(line: &str) -> Result<Self, Self::Error> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         todo!("Update the implementation from level 0 to handler errors");
     }
 }
